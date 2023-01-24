@@ -23,6 +23,10 @@ public class Bahnhof extends World
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(1280, 720, 1); 
+        setPaintOrder(Train.class, Person.class, Intersection.class, Track.class, Station.class);
+        
+        Station station = new Station();
+        addObject(station, 210, 360);
         
         Intersection topIntersection = new Intersection();
         addObject(topIntersection, 1065, 100);
@@ -47,7 +51,7 @@ public class Bahnhof extends World
     {
         tick++;
         if (tick%90==0 && Greenfoot.getRandomNumber(100) >= 50) {
-            addObject(new Person(), Greenfoot.getRandomNumber(380), Greenfoot.getRandomNumber(720));
+            addObject(new Person(), Greenfoot.getRandomNumber(380)+10, Greenfoot.getRandomNumber(700)+10);
         }
     }
 }
