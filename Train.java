@@ -17,12 +17,25 @@ public class Train extends Actor
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     public Train() {
-        trainCapacity = Greenfoot.getRandomNumber(3);
+        trainCapacity = Greenfoot.getRandomNumber(250)+100;
+        
+        switch(Greenfoot.getRandomNumber(2)){
+            case 0:
+                desiredTrack = 1;
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+        }
+        
     }
     
     public void act()
     {
-        // Add your action code here.
+        if (isTouching(Intersection.class)) {
+            
+        }
     }
     
     public int getCapacity() {
