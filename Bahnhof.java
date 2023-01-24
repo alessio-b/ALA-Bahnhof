@@ -1,4 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import java.util.Arrays;
 
 /**
  * Write a description of class MyWorld here.
@@ -11,10 +12,10 @@ public class Bahnhof extends World
     int tick;
     
     // [startX, endX, startY, endY, entryX, entryY]
-    public int[] Track1 = {13, 70, 430, 855, 405, 40};
-    public int[] Track2 = {139, 329, 430, 855, 405, 233};
-    public int[] Track3 = {399, 585, 430, 855, 405, };
-    public int[] Track4 = {659, 710, 430, 855, 405, };
+    public int[][] Tracks = {{13, 70, 430, 855, 405, 40}, 
+                            {139, 329, 430, 855, 405, 233}, 
+                            {399, 585, 430, 855, 405, 500}, 
+                            {659, 710, 430, 855, 405, 688}};
     /**
      * Constructor for objects of class MyWorld.
      * 
@@ -47,7 +48,7 @@ public class Bahnhof extends World
     {
         tick++;
         if (tick%90==0 && Greenfoot.getRandomNumber(100) >= 50) {
-            addObject(new Person(), Greenfoot.getRandomNumber(380), Greenfoot.getRandomNumber(720));
+            addObject(new Person(Tracks[Greenfoot.getRandomNumber(4)]), Greenfoot.getRandomNumber(380), Greenfoot.getRandomNumber(720));
         }
     }
 }
