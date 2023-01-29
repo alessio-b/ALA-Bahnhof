@@ -12,6 +12,7 @@ public class Person extends Actor
     private String state; // "walking", "waiting", "leaving"
     private int[] destination = new int[2]; // [X, Y]
     private int[] targets;
+    private boolean readyEnter;
     GreenfootImage standing = new GreenfootImage("person/standing.png");
     GreenfootImage walking1 = new GreenfootImage("person/walking1.png");
     GreenfootImage walking2 = new GreenfootImage("person/walking2.png");
@@ -25,34 +26,10 @@ public class Person extends Actor
         targets = target;
         
         //set first Destination to Entry Point
-        destination[0] = targets[4];
-        destination[1] = targets[5];
+        destination[0] = targets[5];
+        destination[1] = targets[6];
         
-        //set first destination
-        
-        
-        /*
-        String[] randomTable = {"D1", "D2", "D3", "D4"};
-        String tmp = randomTable[Greenfoot.getRandomNumber(3)];
-        switch(tmp) {
-            case "D1":
-                destination[0] = Greenfoot.getRandomNumber(855-430)+430;
-                destination[1] = Greenfoot.getRandomNumber(70-13)+13;
-                break;
-            case "D2":
-                destination[0] = Greenfoot.getRandomNumber(855-430)+430;
-                destination[1] = Greenfoot.getRandomNumber(329-139)+139;
-                break;
-            case "D3":
-                destination[0] = Greenfoot.getRandomNumber(855-430)+430;
-                destination[1] = Greenfoot.getRandomNumber(585-399)+399;
-                break;
-            case "D4":
-                destination[0] = Greenfoot.getRandomNumber(855-430)+430;
-                destination[1] = Greenfoot.getRandomNumber(710-659)+659;
-                break;
-        }
-        */
+        readyEnter = false;
         state = "toEntry";
     }
     
@@ -66,8 +43,8 @@ public class Person extends Actor
         if (state == "toEntry" || state == "toTrack") {
             if ( getX() == destination[0] && getY() == destination[1]) {
                 if (state == "toEntry") {
-                    destination[0] = Greenfoot.getRandomNumber(targets[3]-targets[2])+targets[2];
-                    destination[1] = Greenfoot.getRandomNumber(targets[1]-targets[0])+targets[0];
+                    destination[0] = Greenfoot.getRandomNumber(targets[4]-targets[3])+targets[3];
+                    destination[1] = Greenfoot.getRandomNumber(targets[2]-targets[1])+targets[1];
                             
                     state = "toTrack";
                     return;
@@ -88,6 +65,22 @@ public class Person extends Actor
                 setImage(walking1);
             } else if (time%20==0) {
                 setImage(walking2);
+            }
+        }
+        if (state == "standing") {
+            if ( ((Bahnhof) getWorld()).Track[targets[0]] == 2 ) {
+                if (time%40==0) {
+                    setImage(walking1);
+                } else if (time%20==0) {
+                    setImage(walking2);
+                }
+                if (targets[7] == 0) {
+                    setRotation(90);
+                    move(1);
+                } else {
+                    setRotation(270);
+                    move(1);
+                }
             }
         }
     }
