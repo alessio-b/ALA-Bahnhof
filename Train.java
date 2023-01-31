@@ -15,15 +15,18 @@ public class Train extends Actor
     private int trainCapacity;
     private int currentAmount;
     
-    int tick;
-    int sTick = 0;
+    
+    private int waitTime = 180;
+    private int tick;
+    private int sTick = 0;
+    private int arrivalTick = 0;
     /**
      * Act - do whatever the Train wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     public Train(int track) {
         setImage("train.png");
-        trainCapacity = Greenfoot.getRandomNumber(2)+1;
+        trainCapacity = Greenfoot.getRandomNumber(200)+50;
         
         assignedIntersec = track;
         
@@ -38,7 +41,7 @@ public class Train extends Actor
         switch(state) {
             case "incoming":
                 setLocation(getX()-2, getY());
-                if (getX() < 1275) {
+                if (getX() < 1225) {
                     state = "waiting";
                 }
                 break;
@@ -50,13 +53,11 @@ public class Train extends Actor
                 }
                 break;
             case "routing":
-                if (getY() == 100 || getY() == 360 || getY() == 620) { 
-                    int temp = 2;
-                } else {
+                if (getX() >= 1105) { 
                     switch (assignedIntersec%3) {
                         case 0:
                             if (tick%4==0 ) {
-                                if (tick-sTick<35) {
+                                if (tick-sTick<36) {
                                     setRotation(getRotation()-1);
                                 } else {
                                     setRotation(getRotation()+1);
@@ -67,7 +68,7 @@ public class Train extends Actor
                             break;
                         case 2:
                             if (tick%4==0 ) {
-                                if (tick-sTick<35) {
+                                if (tick-sTick<36) {
                                     setRotation(getRotation()+1);
                                 } else {
                                     setRotation(getRotation()-1);
@@ -85,6 +86,7 @@ public class Train extends Actor
                 break;
             case "ready":
                 bahnhof.readyTrack(track);
+                arrivalTick = tick;
                 state = "loading";
                 break;
             case "loading":
@@ -93,32 +95,25 @@ public class Train extends Actor
                     getWorld().removeObject(obj.get(0));
                     currentAmount++;
                 }
-                if (currentAmount >= trainCapacity) {
+                if (currentAmount >= trainCapacity || tick-arrivalTick >= waitTime) {
+                    bahnhof.lockTrack(track);
+                    state = "prepleave";
+                    
+                }
+                break;
+            case "prepleave":
+                setLocation(getX()+1, getY());
+                if (getX() >= 785) {
                     state = "leaving";
                     sTick = tick;
                 }
                 break;
             case "leaving":
-                if (getX() > 1500) {
-                    bahnhof.unlockIntersec(assignedIntersec);
-                    getWorld().removeObject(this);
-                }
-                if (getX() >= 1155 && getX() <= 1275) {
+                if (getX() <= 905) {
                     switch (assignedIntersec%3) {
                         case 0:
                             if (tick%4==0 ) {
-                                if (tick-sTick<35) {
-                                    setRotation(getRotation()+1);
-                                } else {
-                                    setRotation(getRotation()-1);
-                                }
-                                setLocation(getX()+3, getY());
-                            }
-                            setLocation(getX(), getY()+1);
-                            break;
-                        case 2:
-                            if (tick%4==0 ) {
-                                if (tick-sTick<35) {
+                                if (tick-sTick<36) {
                                     setRotation(getRotation()-1);
                                 } else {
                                     setRotation(getRotation()+1);
@@ -127,9 +122,25 @@ public class Train extends Actor
                             }
                             setLocation(getX(), getY()-1);
                             break;
+                        case 2:
+                            if (tick%4==0 ) {
+                                if (tick-sTick<36) {
+                                    setRotation(getRotation()+1);
+                                } else {
+                                    setRotation(getRotation()-1);
+                                }
+                                setLocation(getX()+3, getY());
+                            }
+                            setLocation(getX(), getY()+1);
+                            break;
                     }
                 }
-                setLocation(getX()+1, getY());
+                setLocation(getX()+1, getY());                
+                if (getX() > 1500) {
+                    bahnhof.unlockIntersec(assignedIntersec);
+                    bahnhof.unlockTrack(track);
+                    getWorld().removeObject(this);
+                }
                 break;
         }
        

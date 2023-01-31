@@ -11,7 +11,7 @@ public class Bahnhof extends World
 {
     int tick;
     
-    //
+    // 0=>Open, 1=>Used, 2=>
     public int[] Intersections = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     // [ name,  ]
     public int[] Track = {0, 0, 0};
@@ -22,6 +22,10 @@ public class Bahnhof extends World
                             {1, 399, 500, 430, 855, 405, 500, 1}, 
                             {2, 501, 585, 430, 855, 405, 500, 0},
                             {2, 659, 710, 430, 855, 405, 688, 1}};
+    // [TrainID, validTrack, minCapacity, maxCapacity, waitTime]                        
+    public int[][] Trains = {{0, 0, 100, 225}};
+    
+    public String[] Queue = {};
     /**
      * Constructor for objects of class MyWorld.
      * 
