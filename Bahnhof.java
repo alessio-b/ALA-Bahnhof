@@ -28,7 +28,6 @@ public class Bahnhof extends World
                             {0, 2, 200, 225, 3600},
                             {0, 2, 100, 225, 1800}};
     
-    public String[] Queue = {};
     /**
      * Constructor for objects of class MyWorld.
      * 
@@ -36,10 +35,14 @@ public class Bahnhof extends World
     public Bahnhof()
     {    
         super(1280, 720, 1, false); 
-        setPaintOrder(Train.class, Person.class, Intersection.class, Track.class, Station.class);
+        setPaintOrder(Screen.class, Train.class, Person.class, Intersection.class, Track.class, Station.class);
         
         Station station = new Station();
-        addObject(station, 210, 360);
+        addObject(station, 215, 360);
+        
+        Screen screen = new Screen();
+        addObject(screen, 215, 130);
+        //screen.addText("Test");
         
         Intersection topIntersection = new Intersection();
         addObject(topIntersection, 1065, 100);
