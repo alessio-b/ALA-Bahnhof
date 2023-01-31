@@ -23,7 +23,10 @@ public class Bahnhof extends World
                             {2, 501, 585, 430, 855, 405, 500, 0},
                             {2, 659, 710, 430, 855, 405, 688, 1}};
     // [TrainID, validTrack, minCapacity, maxCapacity, waitTime]                        
-    public int[][] Trains = {{0, 0, 100, 225}};
+    public int[][] Trains = {{0, 1, 50, 150, 1800},
+                            {0, 0, 100, 225, 1800},
+                            {0, 2, 200, 225, 3600},
+                            {0, 2, 100, 225, 1800}};
     
     public String[] Queue = {};
     /**
@@ -73,43 +76,45 @@ public class Bahnhof extends World
     }
     
     public void spawnTrain(){
+        int[] trainInfo = Trains[Greenfoot.getRandomNumber(Trains.length)];
+        int tracknum;
         for (int tries = 0; tries<9;tries++) {
-            int random = Greenfoot.getRandomNumber(9);
-            if (Intersections[random] == 0) {
-                lockIntersec(random);
-                Train train = new Train(random);
-                int loc = 0;
-                switch (random) {
+            tracknum = Greenfoot.getRandomNumber(3)+ trainInfo[1]*3;
+            if (Intersections[tracknum] == 0) {
+                lockIntersec(tracknum);
+                Train train = new Train(tracknum, trainInfo);
+                int position = 0;
+                switch (tracknum) {
                     case 0:
-                        loc = 32;
+                        position = 32;
                         break;
                     case 1:
-                        loc = 100;
+                        position = 100;
                         break;
                     case 2:
-                        loc = 168;
+                        position = 168;
                         break;
                     case 3:
-                        loc = 292;
+                        position = 292;
                         break;
                     case 4:
-                        loc = 360;
+                        position = 360;
                         break;
                     case 5:
-                        loc = 428;
+                        position = 428;
                         break;
                     case 6:
-                        loc = 552;
+                        position = 552;
                         break;
                     case 7:
-                        loc = 620;
+                        position = 620;
                         break;
                     case 8:
-                        loc = 688;
+                        position = 688;
                         break;
                         
                 }
-                addObject(train, 1500, loc);
+                addObject(train, 1500, position);
                 break;
             }
         }

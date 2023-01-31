@@ -10,25 +10,23 @@ import java.util.List;
 public class Train extends Actor
 {
     private String state;
-    private String trainLine;
     private int assignedIntersec;
-    private int trainCapacity;
     private int currentAmount;
+    private int trainCapacity;
     
-    
-    private int waitTime = 180;
+    private int waitTime;
     private int tick;
     private int sTick = 0;
-    private int arrivalTick = 0;
     /**
      * Act - do whatever the Train wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public Train(int track) {
+    public Train(int track, int[] trainInfo) {
         setImage("train.png");
-        trainCapacity = Greenfoot.getRandomNumber(200)+50;
         
         assignedIntersec = track;
+        trainCapacity = Greenfoot.getRandomNumber(trainInfo[3]-trainInfo[2])+trainInfo[2];
+        waitTime = trainInfo[4];
         
         state = "incoming";
     }
@@ -86,7 +84,7 @@ public class Train extends Actor
                 break;
             case "ready":
                 bahnhof.readyTrack(track);
-                arrivalTick = tick;
+                sTick = tick;
                 state = "loading";
                 break;
             case "loading":
@@ -95,7 +93,7 @@ public class Train extends Actor
                     getWorld().removeObject(obj.get(0));
                     currentAmount++;
                 }
-                if (currentAmount >= trainCapacity || tick-arrivalTick >= waitTime) {
+                if (currentAmount >= trainCapacity || tick-sTick >= waitTime) {
                     bahnhof.lockTrack(track);
                     state = "prepleave";
                     
