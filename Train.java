@@ -137,6 +137,7 @@ public class Train extends Actor
                 if (getX() > 1500) {
                     bahnhof.unlockIntersec(assignedIntersec);
                     bahnhof.unlockTrack(track);
+                    
                     getWorld().removeObject(this);
                 }
                 break;

@@ -1,5 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-//import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  * Write a description of class MyWorld here.
@@ -24,10 +24,11 @@ public class Bahnhof extends World
                             {2, 659, 710, 430, 855, 405, 688, 1}};
     // [TrainID, validTrack, minCapacity, maxCapacity, waitTime]                        
     public int[][] Trains = {{0, 1, 50, 150, 1800},
-                            {0, 0, 100, 225, 1800},
-                            {0, 2, 200, 225, 3600},
-                            {0, 2, 100, 225, 1800}};
+                            {1, 0, 100, 225, 1800},
+                            {2, 2, 200, 225, 3600},
+                            {3, 2, 100, 225, 1800}};
     
+    public ArrayList<String> Queue = new ArrayList<String>();
     /**
      * Constructor for objects of class MyWorld.
      * 
@@ -72,6 +73,10 @@ public class Bahnhof extends World
         if (tick%270==0) {
             spawnTrain();
         }
+        
+        if (Queue.size() > 6) {
+            Queue.remove(0);
+        }
     }
     
     public void spawnPerson() {
@@ -86,6 +91,7 @@ public class Bahnhof extends World
             if (Intersections[tracknum] == 0) {
                 lockIntersec(tracknum);
                 Train train = new Train(tracknum, trainInfo);
+                Queue.add("Train " + trainInfo[0] + " is arriving on Track " + trainInfo[1]);
                 int position = 0;
                 switch (tracknum) {
                     case 0:
