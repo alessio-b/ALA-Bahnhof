@@ -8,40 +8,42 @@ import java.util.List;
  * @version (a version number or a date)
  */
 public class Train extends Actor
-{
+{   
     private String state;
     private String trainLine;
     private int assignedIntersec;
-    private int trainCapacity;
+    private int track;
     private int currentAmount;
+    private int trainCapacity;
     
-    
-    private int waitTime = 180;
+    private int waitTime;
     private int tick;
     private int sTick = 0;
-    private int arrivalTick = 0;
     /**
      * Act - do whatever the Train wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public Train(int track) {
+    public Train(TrainInfo trainInfo, int entryTrack) {
         setImage("train.png");
-        trainCapacity = Greenfoot.getRandomNumber(200)+50;
         
-        assignedIntersec = track;
+        assignedIntersec = entryTrack;
+        track = entryTrack/3;
+        trainCapacity = Greenfoot.getRandomNumber(trainInfo.maxCapacity-trainInfo.minCapacity)+trainInfo.minCapacity;
+        waitTime = trainInfo.waitTime;
+        trainLine = trainInfo.name;
         
         state = "incoming";
     }
     
     public void act()
     {
-        tick++;
         Bahnhof bahnhof = ((Bahnhof)getWorld());
-        int track = (int)Math.floor(assignedIntersec/3);
+        tick++;
         switch(state) {
             case "incoming":
                 setLocation(getX()-2, getY());
                 if (getX() < 1225) {
+                    bahnhof.newMessage(trainLine + " is arriving on Track "+ track);
                     state = "waiting";
                 }
                 break;
@@ -86,7 +88,7 @@ public class Train extends Actor
                 break;
             case "ready":
                 bahnhof.readyTrack(track);
-                arrivalTick = tick;
+                sTick = tick;
                 state = "loading";
                 break;
             case "loading":
@@ -95,7 +97,7 @@ public class Train extends Actor
                     getWorld().removeObject(obj.get(0));
                     currentAmount++;
                 }
-                if (currentAmount >= trainCapacity || tick-arrivalTick >= waitTime) {
+                if (currentAmount >= trainCapacity || tick-sTick >= waitTime) {
                     bahnhof.lockTrack(track);
                     state = "prepleave";
                     
@@ -105,6 +107,7 @@ public class Train extends Actor
                 setLocation(getX()+1, getY());
                 if (getX() >= 785) {
                     state = "leaving";
+                    bahnhof.newMessage(trainLine + " is leaving from Track " + track);
                     sTick = tick;
                 }
                 break;
@@ -139,7 +142,7 @@ public class Train extends Actor
                 if (getX() > 1500) {
                     bahnhof.unlockIntersec(assignedIntersec);
                     bahnhof.unlockTrack(track);
-                    getWorld().removeObject(this);
+                    bahnhof.removeObject(this);
                 }
                 break;
         }
