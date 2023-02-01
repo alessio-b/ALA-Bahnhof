@@ -1,6 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-import java.util.ArrayList;
-
+//import java.awt.Font;
 
 /**
  * Write a description of class Screen here.
@@ -10,27 +9,26 @@ import java.util.ArrayList;
  */
 public class Screen extends Actor
 {
+    //GreenfootImage img;
     
-    private GreenfootImage img = new GreenfootImage(390,220);
-    private ArrayList<String> Queue = new ArrayList<String>();
-    
-    public Screen() {
+    public Screen(String text) {
+        //GreenfootImage img = new GreenfootImage(text, 17, Color.BLACK, Color.WHITE);
+        GreenfootImage img = new GreenfootImage(390, 20);
+        img.setColor(new Color(96, 112, 244));
+        img.fill();
+        
+        img.setColor(new Color(252, 252, 252));
+        img.setFont(new Font("Courier New", 12));
+        img.drawString(text, 5, 10);
         setImage(img);
-        Queue.add("Sir");
-        Queue.add("Cumberbatch");
     } 
     
     public void act()
     {
-        //getImage().clear();
-        String tmp = "";
-        String tmp1 = "Test\n ####";
-        for (int i = 0; i<Queue.size();i++) {
-            tmp = tmp + '\n' + Queue.get(i);
-        }
-        System.out.println(tmp);
-        setImage(new GreenfootImage(tmp, 17, Color.BLACK, Color.WHITE));
 
-        //getImage().drawString(tmp, 0, 10);
+    }
+    
+    public void updateScreen() {
+        setLocation(getX(), getY()+21);
     }
 }

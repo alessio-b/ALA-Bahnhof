@@ -1,4 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import java.util.LinkedList;
 import java.util.ArrayList;
 
 /**
@@ -7,13 +8,31 @@ import java.util.ArrayList;
  * @author (your name) 
  * @version (a version number or a date)
  */
+class TrainInfo{
+        public int ID;
+        public String name; 
+        public int[] tracks;
+        public int minCapacity;
+        public int maxCapacity;
+        public int waitTime;
+        
+        TrainInfo(int ID, String name, int[] tracks, int minCapacity, int maxCapacity, int waitTime) {
+            this.ID = ID;
+            this.name = name;
+            this.tracks = tracks;
+            this.minCapacity = minCapacity;
+            this.maxCapacity = maxCapacity;
+            this.waitTime = waitTime;
+        }
+}
+
 public class Bahnhof extends World
 {
     int tick;
-    
-    // 0=>Open, 1=>Used, 2=>
+   
+    // 0=>Open, 1=>Locked, 2=>Ready
     public int[] Intersections = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    // [ name,  ]
+    // 0=>Open, 1=>Locked
     public int[] Track = {0, 0, 0};
     // [TrackID, startY, endY, startX, endX, entryX, entryY, UpDown]
     public int[][] Platforms = {{0, 13, 70, 430, 855, 405, 40, 0},  
@@ -22,13 +41,11 @@ public class Bahnhof extends World
                             {1, 399, 500, 430, 855, 405, 500, 1}, 
                             {2, 501, 585, 430, 855, 405, 500, 0},
                             {2, 659, 710, 430, 855, 405, 688, 1}};
-    // [TrainID, validTrack, minCapacity, maxCapacity, waitTime]                        
-    public int[][] Trains = {{0, 1, 50, 150, 1800},
-                            {1, 0, 100, 225, 1800},
-                            {2, 2, 200, 225, 3600},
-                            {3, 2, 100, 225, 1800}};
+                            
+    public ArrayList<TrainInfo> TrainList = new ArrayList<>();
     
-    public ArrayList<String> Queue = new ArrayList<String>();
+    public LinkedList<Screen> Queue = new LinkedList<Screen>();    
+    
     /**
      * Constructor for objects of class MyWorld.
      * 
@@ -38,12 +55,13 @@ public class Bahnhof extends World
         super(1280, 720, 1, false); 
         setPaintOrder(Screen.class, Train.class, Person.class, Intersection.class, Track.class, Station.class);
         
+        TrainList.add(new TrainInfo(0, "S19 Koblenz", new int[]{0,1}, 15, 20, 900 ));
+        TrainList.add(new TrainInfo(1, "IC8 Brig", new int[]{1,2}, 20, 35, 1800 ));
+        TrainList.add(new TrainInfo(2, "S2 Buchs", new int[]{2,0}, 25, 30, 1800 ));
+        TrainList.add(new TrainInfo(3, "IR13 Chur", new int[]{0,1}, 10, 15, 600 ));
+        
         Station station = new Station();
         addObject(station, 215, 360);
-        
-        Screen screen = new Screen();
-        addObject(screen, 215, 130);
-        //screen.addText("Test");
         
         Intersection topIntersection = new Intersection();
         addObject(topIntersection, 1065, 100);
@@ -74,26 +92,45 @@ public class Bahnhof extends World
             spawnTrain();
         }
         
-        if (Queue.size() > 6) {
-            Queue.remove(0);
-        }
     }
     
     public void spawnPerson() {
         addObject(new Person(Platforms[Greenfoot.getRandomNumber(5)]), Greenfoot.getRandomNumber(380)+10, Greenfoot.getRandomNumber(700)+10);
     }
     
+    public void newMessage(String text) {
+        
+        if (Queue.size() >= 1) {
+            for (Screen screen : Queue) {
+                screen.updateScreen();
+            }
+        }
+        Screen screen = new Screen(getTime() + " " + text);
+        Queue.addFirst(screen);
+        addObject(screen, 20+screen.getImage().getWidth()/2, 30);
+        if (Queue.size() > 5) { 
+            removeObject(Queue.getLast());
+            Queue.removeLast();
+        }
+    }
+    
+    public String getTime() {
+        String min = Integer.toString((tick/10)%60);
+        if (min.length() <= 1) min = "0" + min;
+        String hour = Integer.toString((int)tick/600);
+        if (hour.length() <= 1) hour = "0" + hour;
+        return hour + ":" + min;
+    }
+    
     public void spawnTrain(){
-        int[] trainInfo = Trains[Greenfoot.getRandomNumber(Trains.length)];
-        int tracknum;
+        TrainInfo trainInfo = TrainList.get(Greenfoot.getRandomNumber(TrainList.size()));
         for (int tries = 0; tries<9;tries++) {
-            tracknum = Greenfoot.getRandomNumber(3)+ trainInfo[1]*3;
-            if (Intersections[tracknum] == 0) {
-                lockIntersec(tracknum);
-                Train train = new Train(tracknum, trainInfo);
-                Queue.add("Train " + trainInfo[0] + " is arriving on Track " + trainInfo[1]);
+            int t = trainInfo.tracks[Greenfoot.getRandomNumber(2)]*3+tries%3;
+            if (Intersections[t] == 0) {
+                lockIntersec(t);
+                Train train = new Train(trainInfo, t);
                 int position = 0;
-                switch (tracknum) {
+                switch (t) {
                     case 0:
                         position = 32;
                         break;
