@@ -92,13 +92,16 @@ public class Train extends Actor
                 state = "loading";
                 break;
             case "loading":
+                bahnhof.TrainLocation.put(trainLine, track);
                 List<Person> obj = getIntersectingObjects(Person.class);
                 for (int i=0; i<obj.size(); i++) {
                     getWorld().removeObject(obj.get(0));
+                    System.out.println(obj.get(0).trainInfo.name == trainLine);
                     currentAmount++;
                 }
                 if (currentAmount >= trainCapacity || tick-sTick >= waitTime) {
-                    bahnhof.lockTrack(track);
+                    bahnhof.TrainLocation.remove(trainLine);
+                    bahnhof.newMessage(trainLine + " is leaving from Track " + track);
                     state = "prepleave";
                     
                 }
@@ -107,7 +110,6 @@ public class Train extends Actor
                 setLocation(getX()+1, getY());
                 if (getX() >= 785) {
                     state = "leaving";
-                    bahnhof.newMessage(trainLine + " is leaving from Track " + track);
                     sTick = tick;
                 }
                 break;

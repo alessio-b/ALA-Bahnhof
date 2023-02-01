@@ -1,5 +1,6 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 /**
@@ -43,7 +44,7 @@ public class Bahnhof extends World
                             {2, 659, 710, 430, 855, 405, 688, 1}};
                             
     public ArrayList<TrainInfo> TrainList = new ArrayList<>();
-    
+    public HashMap<String, Integer> TrainLocation = new HashMap<String, Integer>();
     public LinkedList<Screen> Queue = new LinkedList<Screen>();    
     
     /**
@@ -82,10 +83,18 @@ public class Bahnhof extends World
         addObject(bottomTrack, 640, 620);
     }
     
+    public int getTrainTrack(String trainName) {
+        if (TrainLocation.containsKey(trainName)) {
+            return TrainLocation.get(trainName);
+        } 
+        return -1;
+    }
+    
     public void act()
     {
         tick++;
         if (tick%90==0 && Greenfoot.getRandomNumber(100) >= 50) {
+            TrainInfo trainInfo = TrainList.get(Greenfoot.getRandomNumber(TrainList.size()));
             spawnPerson();
         }
         if (tick%270==0) {
@@ -95,7 +104,7 @@ public class Bahnhof extends World
     }
     
     public void spawnPerson() {
-        addObject(new Person(Platforms[Greenfoot.getRandomNumber(5)]), Greenfoot.getRandomNumber(380)+10, Greenfoot.getRandomNumber(700)+10);
+        addObject(new Person(TrainList.get(Greenfoot.getRandomNumber(TrainList.size()))), Greenfoot.getRandomNumber(380)+10, Greenfoot.getRandomNumber(700)+10);
     }
     
     public void newMessage(String text) {
